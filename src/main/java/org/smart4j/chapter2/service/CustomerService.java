@@ -33,25 +33,12 @@ public class CustomerService {
             List<Customer> customerList = new ArrayList<>();
             conn = DatabaseHelper.getConection();
             String sql = "select * from customer";
-            PreparedStatement stmt = conn.prepareStatement(sql);
-            ResultSet rs =stmt.executeQuery();
-            while (rs.next()){
-                Customer cust = new Customer();
-                cust.setId(rs.getLong("id"));
-                cust.setName(rs.getString("name"));
-                cust.setContact(rs.getString("contact"));
-                cust.setEmail(rs.getString("email"));
-                cust.setRemark(rs.getString("remark"));
-                cust.setTelephone(rs.getString("telephone"));
-                customerList.add(cust);
-            }
+            conn = DatabaseHelper.getConection();
+            customerList = DatabaseHelper.getEntityList(Customer.class,conn,sql);
             return customerList;
-        }catch (SQLException e){
-            LOGGER.error("execute sql failure " ,e);
         }finally {
            DatabaseHelper.closeConnection(conn);
         }
-        return null;
     }
 
     public Customer getCustomer(long id){
