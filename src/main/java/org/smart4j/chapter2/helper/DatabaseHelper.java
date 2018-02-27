@@ -168,7 +168,7 @@ public class DatabaseHelper {
     public static <T>List<T> queryEntityList(Class<T> entityClass,String sql,Object... params){
         List<T> entityList;
         try {
-            Connection conn = CONNECTION_THREAD_LOCAL.get();
+            Connection conn = getConection();
             entityList = QUERY_RUNNER.query(conn,sql,new BeanListHandler<T>(entityClass),params);
         } catch (SQLException e) {
            LOGGER.error("query entity list failure",e);
@@ -187,7 +187,6 @@ public class DatabaseHelper {
         if (conn == null) {
             try {
                     conn = DriverManager.getConnection(URL,USERNAME,PASSWORD);
-
             }catch (Exception e){
                 LOGGER.error("get connection failure",e);
                 throw new RuntimeException(e);
