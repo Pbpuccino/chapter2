@@ -10,6 +10,10 @@ import org.slf4j.LoggerFactory;
 import org.smart4j.chapter2.util.CollectionUtil;
 import org.smart4j.chapter2.util.PropsUtil;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -46,6 +50,23 @@ public class DatabaseHelper {
     }
 
     /**
+     * 执行sql文件
+     */
+    public static void executeSqlFile(String filePath){
+        InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(filePath);
+        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+        try {
+            String sql;
+            while ((sql = reader.readLine()) != null){
+                executeUpdate(sql);
+            }
+        } catch (IOException e) {
+            LOGGER.error("execute sql file failure",e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
      * 删除实体
      */
     public static <T> boolean deleteEntity(Class<T> entityClass , long id){
@@ -62,13 +83,13 @@ public class DatabaseHelper {
         }
 
         String sql = "UPDATE " + getTableName(entityClass) + " SET ";
-        StringBuilder columns = new StringBuilder(128).append(" ( ");
+        StringBuilder columns = new StringBuilder(128);
 
         for (String fieldName : fieldMap.keySet()){
             columns.append(fieldName).append("=?,");
         }
 
-        sql += columns.replace(columns.lastIndexOf(","),columns.length(),")") + " where id = ? ";
+        sql += columns.substring(0,columns.lastIndexOf(",")) + " where id = ? ";
         List<Object> paramList = new ArrayList<>();
         paramList.addAll(fieldMap.values());
         paramList.add(id);
