@@ -28,37 +28,38 @@ public class CustomerService {
      * @return
      */
     public List<Customer>  getCustomerList(){
-        Connection conn = null;
-        try{
-            List<Customer> customerList = new ArrayList<>();
-            conn = DatabaseHelper.getConection();
             String sql = "select * from customer";
-            conn = DatabaseHelper.getConection();
-            customerList = DatabaseHelper.getEntityList(Customer.class,conn,sql);
-            return customerList;
-        }finally {
-           DatabaseHelper.closeConnection(conn);
-        }
+            return DatabaseHelper.queryEntityList(Customer.class,sql);
     }
 
+
+    /**
+     * 获取客户
+     */
     public Customer getCustomer(long id){
-        //TODO
-        return null;
+        String sql = "SELECT * FROM customer where id = ?";
+        return DatabaseHelper.queryEntity(Customer.class,sql,id);
     }
 
+    /**
+     * 创建客户
+     */
     public boolean createCustomer(Map<String,Object> fieldMap){
-        //TODO
-        return false;
+        return DatabaseHelper.insertEntity(Customer.class,fieldMap);
     }
 
-    public boolean updateCustomer(Map<String,Object> fieldMap){
-        //TODO
-        return false;
+    /**
+     * 更新客户
+     */
+    public boolean updateCustomer(long id,Map<String,Object> fieldMap){
+        return DatabaseHelper.updateEntity(Customer.class,id,fieldMap);
     }
 
+    /**
+     * 删除客户
+     */
     public boolean deleteCustomer(long id){
-        //TODO
-        return false;
+        return DatabaseHelper.deleteEntity(Customer.class,id);
     }
 
 }
